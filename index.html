@@ -34,7 +34,6 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 
 <header>
   <h1>심리상담 모임 — 만다라트</h1>
-  <button class="save-btn" onclick="saveImage()">⬇ JPG 저장</button>
   <div class="tabs">
     <button class="tab-btn active" data-member="건배">건배</button>
     <button class="tab-btn" data-member="뚜껑">뚜껑</button>
@@ -44,6 +43,7 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 </header>
 
 <div class="outer-grid" id="outer-grid"></div>
+<div style="text-align:center;margin-top:16px;"><button class="save-btn" onclick="saveImage()">⬇ JPG 저장</button></div>
 
 <script>
 const SUPABASE_URL = 'https://eejpkqgmlocysnhslkgk.supabase.co';
