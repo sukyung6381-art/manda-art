@@ -50,7 +50,7 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 <body>
 
 <header>
-  <h1>만다라트</h1>
+  <h1 id="page-title">건배님의 만다라트</h1>
   <div class="tabs">
     <button class="tab-btn active" data-member="건배">건배님</button>
     <button class="tab-btn" data-member="뚜껑">뚜껑님</button>
@@ -218,6 +218,7 @@ function buildGrid(member) {
 function switchTab(member) {
   if (demoAbort) { demoAbort(); demoAbort = null; }
   currentMember = member;
+  document.getElementById('page-title').textContent = `${member}님의 만다라트`;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
   buildGrid(member);
 }
