@@ -39,6 +39,12 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 .save-btn { display: inline-block; margin-top: 20px; padding: 12px 36px; border: none; border-radius: 28px; background: #3d2e1e; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.03em; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
 .save-btn:hover { background: #5a3e28; }
 .save-btn:disabled { opacity: 0.5; cursor: default; }
+
+.toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.88); background: rgba(61,46,30,0.93); color: #fff; padding: 20px 32px; border-radius: 18px; font-size: 15px; line-height: 1.75; text-align: center; z-index: 300; opacity: 0; transition: opacity 0.35s, transform 0.35s; pointer-events: none; box-shadow: 0 6px 28px rgba(0,0,0,0.28); white-space: nowrap; }
+.toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+.demo-cursor { display: inline-block; width: 1.5px; height: 1em; background: currentColor; margin-left: 1px; vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 </style>
 </head>
 <body>
@@ -210,6 +216,7 @@ function buildGrid(member) {
 }
 
 function switchTab(member) {
+  if (demoAbort) { demoAbort(); demoAbort = null; }
   currentMember = member;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
   buildGrid(member);
@@ -230,9 +237,71 @@ async function fetchAll() {
   ));
 }
 
+let demoAbort = null;
+
+function showIntro() {
+  if (localStorage.getItem('mandalart_intro')) return;
+  localStorage.setItem('mandalart_intro', '1');
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = '영역 터치 시, 입력할 수 있어요.<br>입력하면 자동 저장돼요!';
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => { toast.remove(); startTypingDemo(); }, 380);
+  }, 3000);
+}
+
+async function startTypingDemo() {
+  const input = document.querySelector('.cell-input[data-idx="40"]');
+  if (!input || input.textContent.trim()) return;
+
+  let cancelled = false;
+  demoAbort = () => { cancelled = true; };
+
+  const onFocus = () => { cancelled = true; };
+  input.addEventListener('focus', onFocus);
+
+  const cursor = document.createElement('span');
+  cursor.className = 'demo-cursor';
+  input.parentNode.appendChild(cursor);
+
+  const d = ms => new Promise(r => setTimeout(r, ms));
+  const words = ['행복', '노후', '건강'];
+
+  for (const word of words) {
+    if (cancelled) break;
+    for (const ch of word) {
+      if (cancelled) break;
+      await d(160);
+      if (cancelled) break;
+      input.textContent += ch;
+    }
+    if (cancelled) break;
+    await d(850);
+    while (input.textContent.length > 0 && !cancelled) {
+      await d(90);
+      if (cancelled) break;
+      input.textContent = input.textContent.slice(0, -1);
+    }
+    if (cancelled) break;
+    await d(350);
+  }
+
+  cursor.remove();
+  if (!cancelled) input.textContent = '';
+  input.removeEventListener('focus', onFocus);
+  demoAbort = null;
+}
+
 (async () => {
   await fetchAll();
   switchTab('건배');
+  showIntro();
 })();
 
 async function saveImage() {
