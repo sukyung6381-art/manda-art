@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>심리상담 모임 — 만다라트</title>
+<title>만다라트</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,16 +15,27 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 .tab-btn { padding: 7px 22px; border: 1.5px solid #c8b89a; border-radius: 20px; background: #fff; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 500; color: #9a856a; transition: all 0.15s; }
 .tab-btn.active { background: #3d2e1e; border-color: #3d2e1e; color: #fff; font-weight: 700; }
 
+.status { position: fixed; top: 12px; right: 14px; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; background: #fff; box-shadow: 0 1px 5px rgba(0,0,0,0.15); z-index: 100; display: none; white-space: nowrap; }
+.status.saving { display: block; color: #888; }
+.status.saved  { display: block; color: #5a7a4a; }
+.status.error  { display: block; color: #c0392b; }
+
 .outer-grid { display: grid; grid-template-columns: 1fr clamp(10px,2.5vw,24px) 1fr clamp(10px,2.5vw,24px) 1fr; grid-template-rows: auto clamp(10px,2.5vw,24px) auto clamp(10px,2.5vw,24px) auto; width: 100%; max-width: 720px; margin: 0 auto; }
 .arrow { display: flex; align-items: center; justify-content: center; color: #c8b89a; font-size: clamp(8px,1.2vw,11px); line-height: 1; }
 .block { display: grid; grid-template-columns: repeat(3,1fr); border: 2px solid #c8b89a; }
 .block-b4 { border-color: #9ca3af; }
-.cell { aspect-ratio: 1; border-right: 0.5px solid #c8b89a; border-bottom: 0.5px solid #c8b89a; background: #ffffff; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding: 3px; font-size: clamp(8px,1.2vw,11px); line-height: 1.3; word-break: break-all; color: rgba(92,74,50,0.6); }
+.cell { aspect-ratio: 1; border-right: 0.5px solid #c8b89a; border-bottom: 0.5px solid #c8b89a; background: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 2px; }
 .block .cell:nth-child(3n)        { border-right: none; }
 .block .cell:nth-last-child(-n+3) { border-bottom: none; }
-.cell.center { background: #e8ddd0; color: #5c4a32; font-weight: 500; }
-.block-b4 .cell { background: #e8ddd0; border-color: #9ca3af; color: #111111; }
-.block-b4 .cell.main-center { background: #ffffff; font-weight: 700; }
+.cell.center { background: #e8ddd0; }
+.block-b4 .cell { background: #e8ddd0; border-color: #9ca3af; }
+.block-b4 .cell.main-center { background: #ffffff; }
+
+.cell-input { width: 100%; text-align: center; outline: none; background: transparent; font-family: 'Noto Sans KR', sans-serif; font-size: clamp(8px,1.2vw,11px); line-height: 1.3; word-break: break-all; overflow: hidden; cursor: text; color: rgba(92,74,50,0.6); }
+.cell.center .cell-input { color: #5c4a32; font-weight: 500; }
+.block-b4 .cell .cell-input { color: #111111; }
+.block-b4 .cell.main-center .cell-input { font-weight: 700; }
+
 .save-btn { display: inline-block; margin-top: 20px; padding: 12px 36px; border: none; border-radius: 28px; background: #3d2e1e; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.03em; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
 .save-btn:hover { background: #5a3e28; }
 .save-btn:disabled { opacity: 0.5; cursor: default; }
@@ -33,7 +44,7 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 <body>
 
 <header>
-  <h1>심리상담 모임 — 만다라트</h1>
+  <h1>만다라트</h1>
   <div class="tabs">
     <button class="tab-btn active" data-member="건배">건배</button>
     <button class="tab-btn" data-member="뚜껑">뚜껑</button>
@@ -42,6 +53,7 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
   </div>
 </header>
 
+<div class="status" id="status"></div>
 <div class="outer-grid" id="outer-grid"></div>
 <div style="text-align:center;margin-top:16px;"><button class="save-btn" onclick="saveImage()">⬇ JPG 저장</button></div>
 
@@ -62,6 +74,10 @@ const BLOCK_CELLS = {
   B8: { cells: [60,61,62,69,70,71,78,79,80], center: 70 },
 };
 
+const B4_CELL_IDX = [30,31,32,39,40,41,48,49,50];
+const B4_SYNC = { 0:'B0', 1:'B1', 2:'B2', 3:'B3', 5:'B5', 6:'B6', 7:'B7', 8:'B8' };
+const BLOCK_CENTER_IDX = { B0:10, B1:13, B2:16, B3:37, B5:43, B6:64, B7:67, B8:70 };
+
 const OUTER_ITEMS = [
   {type:'block',key:'B0'},{type:'gap'},{type:'block',key:'B1'},{type:'gap'},{type:'block',key:'B2'},
   {type:'gap'},{type:'arrow',text:'↖'},{type:'arrow',text:'↑'},{type:'arrow',text:'↗'},{type:'gap'},
@@ -71,6 +87,135 @@ const OUTER_ITEMS = [
 ];
 
 const data = {};
+MEMBERS.forEach(m => { data[m] = Array(81).fill(''); });
+
+let currentMember = '건배';
+let saving = false;
+let pendingSave = false;
+
+const statusEl = document.getElementById('status');
+
+function showStatus(state, time) {
+  statusEl.className = 'status ' + state;
+  if (state === 'saving') statusEl.textContent = '● 저장 중...';
+  else if (state === 'saved') statusEl.textContent = `✓ 저장됨 ${time}`;
+  else if (state === 'error') statusEl.textContent = '✕ 저장 실패 — 재시도 중';
+  else if (state === 'fatal') statusEl.textContent = '✕ 저장 실패';
+}
+
+async function saveMember(member, isRetry) {
+  if (saving) { pendingSave = true; return; }
+  saving = true;
+  showStatus('saving');
+  let succeeded = false;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/mandalart`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({ member, cells: data[member], updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    succeeded = true;
+    const now = new Date();
+    showStatus('saved', `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`);
+  } catch {
+    showStatus(isRetry ? 'fatal' : 'error');
+  } finally {
+    saving = false;
+    if (pendingSave) { pendingSave = false; saveMember(member, false); }
+    else if (!succeeded && !isRetry) setTimeout(() => { if (!saving) saveMember(member, true); }, 3000);
+  }
+}
+
+function syncCell(member, changedIdx, value) {
+  const b4Local = B4_CELL_IDX.indexOf(changedIdx);
+  if (b4Local !== -1) {
+    const targetBlock = B4_SYNC[b4Local];
+    if (targetBlock) {
+      const targetIdx = BLOCK_CENTER_IDX[targetBlock];
+      data[member][targetIdx] = value;
+      const el = document.querySelector(`.cell-input[data-idx="${targetIdx}"]`);
+      if (el) el.textContent = value;
+    }
+  }
+  const centerEntry = Object.entries(BLOCK_CENTER_IDX).find(([, idx]) => idx === changedIdx);
+  if (centerEntry) {
+    const b4LocalStr = Object.entries(B4_SYNC).find(([, b]) => b === centerEntry[0])?.[0];
+    if (b4LocalStr !== undefined) {
+      const b4CellIdx = B4_CELL_IDX[Number(b4LocalStr)];
+      data[member][b4CellIdx] = value;
+      const el = document.querySelector(`.cell-input[data-idx="${b4CellIdx}"]`);
+      if (el) el.textContent = value;
+    }
+  }
+}
+
+function onCellInput(member, cellIdx, inputEl) {
+  if (inputEl.textContent.length > 20) {
+    inputEl.textContent = inputEl.textContent.slice(0, 20);
+    const range = document.createRange();
+    range.selectNodeContents(inputEl);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  data[member][cellIdx] = inputEl.textContent;
+  syncCell(member, cellIdx, data[member][cellIdx]);
+  saveMember(member, false);
+}
+
+function buildGrid(member) {
+  const og = document.getElementById('outer-grid');
+  og.innerHTML = '';
+  const memberCells = data[member];
+
+  for (const item of OUTER_ITEMS) {
+    if (item.type === 'gap') { og.appendChild(document.createElement('div')); continue; }
+    if (item.type === 'arrow') {
+      const d = document.createElement('div');
+      d.className = 'arrow';
+      d.textContent = item.text;
+      og.appendChild(d);
+      continue;
+    }
+    const bd = BLOCK_CELLS[item.key];
+    const be = document.createElement('div');
+    be.className = `block block-${item.key.toLowerCase()}`;
+    for (const ci of bd.cells) {
+      const isCenter = (ci === bd.center);
+      const isMainCenter = (ci === 40);
+      const ce = document.createElement('div');
+      ce.className = 'cell' + (isCenter ? ' center' : '') + (isMainCenter ? ' main-center' : '');
+
+      const input = document.createElement('div');
+      input.contentEditable = 'true';
+      input.className = 'cell-input';
+      input.dataset.idx = ci;
+      input.textContent = memberCells[ci] || '';
+      input.setAttribute('autocorrect', 'off');
+      input.setAttribute('spellcheck', 'false');
+      input.addEventListener('input', () => onCellInput(member, ci, input));
+
+      ce.appendChild(input);
+      be.appendChild(ce);
+    }
+    og.appendChild(be);
+  }
+}
+
+function switchTab(member) {
+  currentMember = member;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
+  buildGrid(member);
+}
+
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.member)));
 
 async function fetchAll() {
   await Promise.all(MEMBERS.map(m =>
@@ -85,34 +230,6 @@ async function fetchAll() {
   ));
 }
 
-function buildGrid(member) {
-  const og = document.getElementById('outer-grid');
-  og.innerHTML = '';
-  const memberCells = data[member] || Array(81).fill('');
-
-  for (const item of OUTER_ITEMS) {
-    if (item.type === 'gap') { og.appendChild(document.createElement('div')); continue; }
-    if (item.type === 'arrow') { const d=document.createElement('div'); d.className='arrow'; d.textContent=item.text; og.appendChild(d); continue; }
-    const bd = BLOCK_CELLS[item.key];
-    const be = document.createElement('div');
-    be.className = `block block-${item.key.toLowerCase()}`;
-    for (const ci of bd.cells) {
-      const ce = document.createElement('div');
-      ce.className = 'cell' + (ci===bd.center?' center':'') + (ci===40?' main-center':'');
-      ce.textContent = memberCells[ci] || '';
-      be.appendChild(ce);
-    }
-    og.appendChild(be);
-  }
-}
-
-function switchTab(member) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
-  buildGrid(member);
-}
-
-document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.member)));
-
 (async () => {
   await fetchAll();
   switchTab('건배');
@@ -121,11 +238,10 @@ document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', (
 async function saveImage() {
   const btn = document.querySelector('.save-btn');
   btn.textContent = '저장 중...'; btn.disabled = true;
-  const member = document.querySelector('.tab-btn.active')?.dataset.member || '만다라트';
   try {
     const canvas = await html2canvas(document.getElementById('outer-grid'), { backgroundColor: '#f5f0eb', scale: 2, useCORS: true, logging: false });
     const a = document.createElement('a');
-    a.download = `${member}_만다라트.jpg`;
+    a.download = `${currentMember}_만다라트.jpg`;
     a.href = canvas.toDataURL('image/jpeg', 0.95);
     a.click();
   } finally {
