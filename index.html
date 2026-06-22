@@ -52,10 +52,10 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 <header>
   <h1>만다라트</h1>
   <div class="tabs">
-    <button class="tab-btn active" data-member="건배">건배</button>
-    <button class="tab-btn" data-member="뚜껑">뚜껑</button>
-    <button class="tab-btn" data-member="구원">구원</button>
-    <button class="tab-btn" data-member="장수">장수</button>
+    <button class="tab-btn active" data-member="건배">건배님</button>
+    <button class="tab-btn" data-member="뚜껑">뚜껑님</button>
+    <button class="tab-btn" data-member="구원">구원님</button>
+    <button class="tab-btn" data-member="장수">장수님</button>
   </div>
 </header>
 
@@ -257,8 +257,20 @@ function showIntro() {
 }
 
 async function startTypingDemo() {
-  const input = document.querySelector('.cell-input[data-idx="40"]');
-  if (!input || input.textContent.trim()) return;
+  const memberData = data[currentMember];
+
+  // 중앙 셀이 비어있으면 우선, 아니면 빈 칸 중 랜덤 선택
+  let targetIdx;
+  if (!memberData[40] || !memberData[40].trim()) {
+    targetIdx = 40;
+  } else {
+    const empty = memberData.reduce((acc, v, i) => { if (!v || !v.trim()) acc.push(i); return acc; }, []);
+    if (empty.length === 0) return; // 모든 칸이 입력됨
+    targetIdx = empty[Math.floor(Math.random() * empty.length)];
+  }
+
+  const input = document.querySelector(`.cell-input[data-idx="${targetIdx}"]`);
+  if (!input) return;
 
   let cancelled = false;
   demoAbort = () => { cancelled = true; };
