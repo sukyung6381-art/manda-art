@@ -8,10 +8,10 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans KR', sans-serif; background: #f5f0eb; min-height: 100vh; padding: 24px 12px 48px; }
-header { text-align: center; margin-bottom: 20px; }
-h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin-bottom: 14px; }
+header { text-align: center; margin-bottom: 24px; }
+h1 { font-size: clamp(22px, 5vw, 34px); font-weight: 700; color: #3d2e1e; margin-top: 12px; margin-bottom: 0; }
 
-.tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 20px; }
+.tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 0; }
 .tab-btn { padding: 7px 22px; border: 1.5px solid #c8b89a; border-radius: 20px; background: #fff; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 500; color: #9a856a; transition: all 0.15s; }
 .tab-btn.active { background: #3d2e1e; border-color: #3d2e1e; color: #fff; font-weight: 700; }
 
@@ -36,9 +36,6 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 .block-b4 .cell .cell-input { color: #111111; }
 .block-b4 .cell.main-center .cell-input { font-weight: 700; }
 
-.save-btn { display: inline-block; margin-top: 20px; padding: 12px 36px; border: none; border-radius: 28px; background: #3d2e1e; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.03em; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
-.save-btn:hover { background: #5a3e28; }
-.save-btn:disabled { opacity: 0.5; cursor: default; }
 
 .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.88); background: rgba(61,46,30,0.93); color: #fff; padding: 20px 32px; border-radius: 18px; font-size: 15px; line-height: 1.75; text-align: center; z-index: 300; opacity: 0; transition: opacity 0.35s, transform 0.35s; pointer-events: none; box-shadow: 0 6px 28px rgba(0,0,0,0.28); white-space: nowrap; }
 .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -50,18 +47,18 @@ h1 { font-size: clamp(16px, 4vw, 24px); font-weight: 700; color: #3d2e1e; margin
 <body>
 
 <header>
-  <h1 id="page-title">건배님의 만다라트</h1>
   <div class="tabs">
     <button class="tab-btn active" data-member="건배">건배님</button>
     <button class="tab-btn" data-member="뚜껑">뚜껑님</button>
     <button class="tab-btn" data-member="구원">구원님</button>
     <button class="tab-btn" data-member="장수">장수님</button>
   </div>
+  <h1 id="page-title">건배님의 만다라트</h1>
 </header>
 
 <div class="status" id="status"></div>
 <div class="outer-grid" id="outer-grid"></div>
-<div style="text-align:center;margin-top:16px;"><button class="save-btn" onclick="saveImage()">⬇ JPG 저장</button></div>
+<div id="insta-banner" style="display:none;text-align:center;margin-top:20px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:#9a856a;letter-spacing:0.03em;">인스타 친구해요! @kyommee</div>
 
 <script>
 const SUPABASE_URL = 'https://eejpkqgmlocysnhslkgk.supabase.co';
@@ -220,6 +217,7 @@ function switchTab(member) {
   currentMember = member;
   document.getElementById('page-title').textContent = `${member}님의 만다라트`;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
+  document.getElementById('insta-banner').style.display = member === '뚜껑' ? 'block' : 'none';
   buildGrid(member);
 }
 
@@ -317,20 +315,6 @@ async function startTypingDemo() {
   showIntro();
 })();
 
-async function saveImage() {
-  const btn = document.querySelector('.save-btn');
-  btn.textContent = '저장 중...'; btn.disabled = true;
-  try {
-    const canvas = await html2canvas(document.getElementById('outer-grid'), { backgroundColor: '#f5f0eb', scale: 2, useCORS: true, logging: false });
-    const a = document.createElement('a');
-    a.download = `${currentMember}_만다라트.jpg`;
-    a.href = canvas.toDataURL('image/jpeg', 0.95);
-    a.click();
-  } finally {
-    btn.textContent = '⬇ JPG 저장'; btn.disabled = false;
-  }
-}
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
