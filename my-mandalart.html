@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>만다라트</title>
+<title>나의 만다라트</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,14 +11,8 @@ body { font-family: 'Noto Sans KR', sans-serif; background: #f5f0eb; min-height:
 header { text-align: center; margin-bottom: 24px; }
 h1 { font-size: clamp(22px, 5vw, 34px); font-weight: 700; color: #3d2e1e; margin-top: 12px; margin-bottom: 0; }
 
-.tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 0; }
-.tab-btn { padding: 7px 22px; border: 1.5px solid #c8b89a; border-radius: 20px; background: #fff; cursor: pointer; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 500; color: #9a856a; transition: all 0.15s; }
-.tab-btn.active { background: #3d2e1e; border-color: #3d2e1e; color: #fff; font-weight: 700; }
-
 .status { position: fixed; top: 12px; right: 14px; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; background: #fff; box-shadow: 0 1px 5px rgba(0,0,0,0.15); z-index: 100; display: none; white-space: nowrap; }
-.status.saving { display: block; color: #888; }
-.status.saved  { display: block; color: #5a7a4a; }
-.status.error  { display: block; color: #c0392b; }
+.status.saved { display: block; color: #5a7a4a; }
 
 .outer-grid { display: grid; grid-template-columns: 1fr clamp(10px,2.5vw,24px) 1fr clamp(10px,2.5vw,24px) 1fr; grid-template-rows: auto clamp(10px,2.5vw,24px) auto clamp(10px,2.5vw,24px) auto; width: 100%; max-width: 720px; margin: 0 auto; }
 .arrow { display: flex; align-items: center; justify-content: center; color: #c8b89a; font-size: clamp(8px,1.2vw,11px); line-height: 1; }
@@ -36,42 +30,31 @@ h1 { font-size: clamp(22px, 5vw, 34px); font-weight: 700; color: #3d2e1e; margin
 .block-b4 .cell .cell-input { color: #111111; }
 .block-b4 .cell.main-center .cell-input { font-weight: 700; }
 
-
 .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.88); background: rgba(61,46,30,0.93); color: #fff; padding: 20px 32px; border-radius: 18px; font-size: 15px; line-height: 1.75; text-align: center; z-index: 300; opacity: 0; transition: opacity 0.35s, transform 0.35s; pointer-events: none; box-shadow: 0 6px 28px rgba(0,0,0,0.28); white-space: nowrap; }
 .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
 .demo-cursor { display: inline-block; width: 1.5px; height: 1em; background: currentColor; margin-left: 1px; vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-#download-html-btn { display: inline-block; padding: 10px 26px; border: 1.5px solid #c8b89a; border-radius: 24px; background: #fff; color: #5c4a32; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.03em; text-decoration: none; transition: all 0.15s; }
-#download-html-btn:hover { background: #3d2e1e; border-color: #3d2e1e; color: #fff; }
+#save-image-btn { padding: 11px 30px; border: none; border-radius: 24px; background: #3d2e1e; color: #fff; font-family: 'Noto Sans KR', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.03em; cursor: pointer; box-shadow: 0 2px 8px rgba(61,46,30,0.25); transition: transform 0.12s, box-shadow 0.12s; }
+#save-image-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(61,46,30,0.3); }
+#save-image-btn:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(61,46,30,0.25); }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="tabs">
-    <button class="tab-btn active" data-member="건배">건배님</button>
-    <button class="tab-btn" data-member="뚜껑">뚜껑님</button>
-    <button class="tab-btn" data-member="구원">구원님</button>
-    <button class="tab-btn" data-member="장수">장수님</button>
-  </div>
-  <h1 id="page-title">건배님의 만다라트</h1>
+  <h1>나의 만다라트</h1>
 </header>
 
 <div class="status" id="status"></div>
 <div class="outer-grid" id="outer-grid"></div>
-<div id="insta-banner" style="display:none;text-align:center;margin-top:20px;font-family:'Noto Sans KR',sans-serif;font-size:17px;color:#9a856a;letter-spacing:0.03em;">인스타 친구해요! <a href="https://www.instagram.com/kyommee" target="_blank" rel="noopener noreferrer" style="color:#3d2e1e;font-weight:700;text-decoration:none;">@kyommee</a></div>
-
-<div style="text-align:center;margin-top:36px;">
-  <a href="my-mandalart.html" download="my-mandalart.html" id="download-html-btn">만다라트 html 다운로드</a>
-  <div style="margin-top:8px;font-size:12px;color:#9a856a;">파일을 받아 더블클릭하면, 나만의 만다라트를 내 컴퓨터에서 쓸 수 있어요</div>
+<div style="text-align:center;margin-top:24px;">
+  <button id="save-image-btn" type="button">내 만다라트 저장하기</button>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://eejpkqgmlocysnhslkgk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_1oszmfRSz0g5FLw9ohA6ug_Jr1_iQm4';
-const MEMBERS = ['건배','뚜껑','구원','장수'];
+const STORAGE_KEY = 'mandalart_local_cells';
 
 const BLOCK_CELLS = {
   B0: { cells: [0,1,2,9,10,11,18,19,20],    center: 10 },
@@ -97,59 +80,31 @@ const OUTER_ITEMS = [
   {type:'block',key:'B6'},{type:'gap'},{type:'block',key:'B7'},{type:'gap'},{type:'block',key:'B8'},
 ];
 
-const data = {};
-MEMBERS.forEach(m => { data[m] = Array(81).fill(''); });
-
-let currentMember = '건배';
-let saving = false;
-let pendingSave = false;
+let cells = Array(81).fill('');
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  if (Array.isArray(saved) && saved.length === 81) cells = saved;
+} catch {}
 
 const statusEl = document.getElementById('status');
+let statusTimer = null;
 
-function showStatus(state, time) {
-  statusEl.className = 'status ' + state;
-  if (state === 'saving') statusEl.textContent = '● 저장 중...';
-  else if (state === 'saved') statusEl.textContent = `✓ 저장됨 ${time}`;
-  else if (state === 'error') statusEl.textContent = '✕ 저장 실패 — 재시도 중';
-  else if (state === 'fatal') statusEl.textContent = '✕ 저장 실패';
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cells));
+  const now = new Date();
+  statusEl.className = 'status saved';
+  statusEl.textContent = `✓ 저장됨 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { statusEl.className = 'status'; }, 2000);
 }
 
-async function saveMember(member, isRetry) {
-  if (saving) { pendingSave = true; return; }
-  saving = true;
-  showStatus('saving');
-  let succeeded = false;
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/mandalart?on_conflict=member`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify({ member, cells: data[member], updated_at: new Date().toISOString() })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    succeeded = true;
-    const now = new Date();
-    showStatus('saved', `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`);
-  } catch {
-    showStatus(isRetry ? 'fatal' : 'error');
-  } finally {
-    saving = false;
-    if (pendingSave) { pendingSave = false; saveMember(member, false); }
-    else if (!succeeded && !isRetry) setTimeout(() => { if (!saving) saveMember(member, true); }, 3000);
-  }
-}
-
-function syncCell(member, changedIdx, value) {
+function syncCell(changedIdx, value) {
   const b4Local = B4_CELL_IDX.indexOf(changedIdx);
   if (b4Local !== -1) {
     const targetBlock = B4_SYNC[b4Local];
     if (targetBlock) {
       const targetIdx = BLOCK_CENTER_IDX[targetBlock];
-      data[member][targetIdx] = value;
+      cells[targetIdx] = value;
       const el = document.querySelector(`.cell-input[data-idx="${targetIdx}"]`);
       if (el) el.textContent = value;
     }
@@ -159,14 +114,14 @@ function syncCell(member, changedIdx, value) {
     const b4LocalStr = Object.entries(B4_SYNC).find(([, b]) => b === centerEntry[0])?.[0];
     if (b4LocalStr !== undefined) {
       const b4CellIdx = B4_CELL_IDX[Number(b4LocalStr)];
-      data[member][b4CellIdx] = value;
+      cells[b4CellIdx] = value;
       const el = document.querySelector(`.cell-input[data-idx="${b4CellIdx}"]`);
       if (el) el.textContent = value;
     }
   }
 }
 
-function onCellInput(member, cellIdx, inputEl) {
+function onCellInput(cellIdx, inputEl) {
   if (inputEl.textContent.length > 20) {
     inputEl.textContent = inputEl.textContent.slice(0, 20);
     const range = document.createRange();
@@ -176,15 +131,14 @@ function onCellInput(member, cellIdx, inputEl) {
     sel.removeAllRanges();
     sel.addRange(range);
   }
-  data[member][cellIdx] = inputEl.textContent;
-  syncCell(member, cellIdx, data[member][cellIdx]);
-  saveMember(member, false);
+  cells[cellIdx] = inputEl.textContent;
+  syncCell(cellIdx, cells[cellIdx]);
+  save();
 }
 
-function buildGrid(member) {
+function buildGrid() {
   const og = document.getElementById('outer-grid');
   og.innerHTML = '';
-  const memberCells = data[member];
 
   for (const item of OUTER_ITEMS) {
     if (item.type === 'gap') { og.appendChild(document.createElement('div')); continue; }
@@ -208,10 +162,10 @@ function buildGrid(member) {
       input.contentEditable = 'true';
       input.className = 'cell-input';
       input.dataset.idx = ci;
-      input.textContent = memberCells[ci] || '';
+      input.textContent = cells[ci] || '';
       input.setAttribute('autocorrect', 'off');
       input.setAttribute('spellcheck', 'false');
-      input.addEventListener('input', () => onCellInput(member, ci, input));
+      input.addEventListener('input', () => onCellInput(ci, input));
 
       ce.appendChild(input);
       be.appendChild(ce);
@@ -220,39 +174,15 @@ function buildGrid(member) {
   }
 }
 
-function switchTab(member) {
-  if (demoAbort) { demoAbort(); demoAbort = null; }
-  currentMember = member;
-  document.getElementById('page-title').textContent = `${member}님의 만다라트`;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.member === member));
-  document.getElementById('insta-banner').style.display = member === '뚜껑' ? 'block' : 'none';
-  buildGrid(member);
-}
-
-document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.member)));
-
-async function fetchAll() {
-  await Promise.all(MEMBERS.map(m =>
-    fetch(`${SUPABASE_URL}/rest/v1/mandalart?member=eq.${encodeURIComponent(m)}&select=cells`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } })
-    .then(r => r.ok ? r.json() : [])
-    .then(rows => {
-      const c = rows[0]?.cells;
-      data[m] = (Array.isArray(c) && c.length === 81) ? c : Array(81).fill('');
-    })
-    .catch(() => { data[m] = Array(81).fill(''); })
-  ));
-}
-
 let demoAbort = null;
 
 function showIntro() {
-  if (localStorage.getItem('mandalart_intro')) return;
-  localStorage.setItem('mandalart_intro', '1');
+  if (localStorage.getItem('mandalart_local_intro')) return;
+  localStorage.setItem('mandalart_local_intro', '1');
 
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.innerHTML = '영역 터치 시, 입력할 수 있어요.<br>입력하면 자동 저장돼요!';
+  toast.innerHTML = '영역 터치 시, 입력할 수 있어요.<br>입력하면 이 컴퓨터에 자동 저장돼요!';
   document.body.appendChild(toast);
 
   requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
@@ -264,14 +194,12 @@ function showIntro() {
 }
 
 async function startTypingDemo() {
-  const memberData = data[currentMember];
-
   // 중앙 셀이 비어있으면 우선, 아니면 빈 칸 중 랜덤 선택
   let targetIdx;
-  if (!memberData[40] || !memberData[40].trim()) {
+  if (!cells[40] || !cells[40].trim()) {
     targetIdx = 40;
   } else {
-    const empty = memberData.reduce((acc, v, i) => { if (!v || !v.trim()) acc.push(i); return acc; }, []);
+    const empty = cells.reduce((acc, v, i) => { if (!v || !v.trim()) acc.push(i); return acc; }, []);
     if (empty.length === 0) return; // 모든 칸이 입력됨
     targetIdx = empty[Math.floor(Math.random() * empty.length)];
   }
@@ -317,11 +245,91 @@ async function startTypingDemo() {
   demoAbort = null;
 }
 
-(async () => {
-  await fetchAll();
-  switchTab('건배');
-  showIntro();
-})();
+function wrapChars(ctx, text, maxWidth) {
+  const lines = [];
+  let line = '';
+  for (const ch of text) {
+    if (line && ctx.measureText(line + ch).width > maxWidth) { lines.push(line); line = ch; }
+    else line += ch;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function saveAsImage() {
+  const CELL = 90, GAP = 30, MARGIN = 40, TITLE_H = 90;
+  const BLOCK = CELL * 3;
+  const gridW = BLOCK * 3 + GAP * 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = gridW + MARGIN * 2;
+  canvas.height = TITLE_H + gridW + MARGIN;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#f5f0eb';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#3d2e1e';
+  ctx.font = "700 30px 'Noto Sans KR', sans-serif";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('나의 만다라트', canvas.width / 2, TITLE_H / 2 + 8);
+
+  const blockPos = k => MARGIN + k * (BLOCK + GAP);
+  const gridY = TITLE_H;
+
+  Object.keys(BLOCK_CELLS).forEach((key, bi) => {
+    const bd = BLOCK_CELLS[key];
+    const isB4 = key === 'B4';
+    const bx = blockPos(bi % 3);
+    const by = gridY + blockPos(Math.floor(bi / 3)) - MARGIN;
+
+    bd.cells.forEach((ci, local) => {
+      const cx = bx + (local % 3) * CELL;
+      const cy = by + Math.floor(local / 3) * CELL;
+      const isCenter = ci === bd.center;
+      const isMainCenter = ci === 40;
+
+      ctx.fillStyle = isB4 ? (isMainCenter ? '#ffffff' : '#e8ddd0') : (isCenter ? '#e8ddd0' : '#ffffff');
+      ctx.fillRect(cx, cy, CELL, CELL);
+      ctx.strokeStyle = isB4 ? '#9ca3af' : '#c8b89a';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx + 0.5, cy + 0.5, CELL, CELL);
+
+      const text = cells[ci] || '';
+      if (text) {
+        const bold = isMainCenter || (isCenter && !isB4);
+        ctx.font = `${bold ? 700 : 500} 13px 'Noto Sans KR', sans-serif`;
+        ctx.fillStyle = isB4 ? '#111111' : (isCenter ? '#5c4a32' : 'rgba(92,74,50,0.75)');
+        const lines = wrapChars(ctx, text, CELL - 10).slice(0, 4);
+        const lineH = 16;
+        const startY = cy + CELL / 2 - (lines.length - 1) * lineH / 2;
+        lines.forEach((ln, li) => ctx.fillText(ln, cx + CELL / 2, startY + li * lineH));
+      }
+    });
+
+    ctx.strokeStyle = isB4 ? '#9ca3af' : '#c8b89a';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(bx, by, BLOCK, BLOCK);
+  });
+
+  ctx.fillStyle = '#c8b89a';
+  ctx.font = "14px 'Noto Sans KR', sans-serif";
+  const cCX = blockPos(1) + BLOCK / 2;
+  const cCY = gridY + blockPos(1) - MARGIN + BLOCK / 2;
+  const off = BLOCK / 2 + GAP / 2;
+  [['↖',-off,-off],['↑',0,-off],['↗',off,-off],['←',-off,0],['→',off,0],['↙',-off,off],['↓',0,off],['↘',off,off]]
+    .forEach(([g, dx, dy]) => ctx.fillText(g, cCX + dx, cCY + dy));
+
+  const a = document.createElement('a');
+  a.download = '나의 만다라트.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+document.getElementById('save-image-btn').addEventListener('click', saveAsImage);
+
+buildGrid();
+showIntro();
 
 </script>
 </body>
